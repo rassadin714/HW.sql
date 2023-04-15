@@ -1,9 +1,9 @@
 CREATE TABLE employee(
-                         id BIGSERIAL NOT NULL PRIMARY KEY,
-                         first_name VARCHAR(50) NOT NULL,
-                         last_name VARCHAR(50) NOT NULL,
-                         gender VARCHAR(6) NOT NULL,
-                         age INT NOT NULL
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    gender VARCHAR(6) NOT NULL,
+    age INT NOT NULL
 );
 INSERT INTO employee (first_name, last_name, gender, age)
 VALUES ('Иван', 'Иванов', 'муж', 25), ('Михаил', 'Михайлов', 'муж', 26), ('Илья', 'Пушкин', 'муж', 30);
@@ -43,3 +43,45 @@ FROM employee
 GROUP BY first_name
 HAVING COUNT(first_name) > 1
 ORDER BY MAX(age);
+
+
+
+CREATE TABLE city(
+    city_id BIGSERIAL NOT NULL PRIMARY KEY,
+    city_name VARCHAR(50) NOT NULL
+);
+
+ALTER TABLE employee ADD city_id INT;
+ALTER TABLE employee ADD FOREIGN KEY (city_id) REFERENCES  city(city_id);
+
+INSERT INTO city (city_name)
+VALUES ('Нижний Новгород'), ('Екатеринбург'), ('Уфа'), ('Санкт-Петербург'), ('Сочи'), ('Москва');
+
+UPDATE employee SET city_id = '1' WHERE id = 1;
+UPDATE employee SET city_id = '3' WHERE id = 5;
+UPDATE employee SET city_id = '4' WHERE id = 4;
+UPDATE employee SET city_id = '2' WHERE id = 3;
+UPDATE employee SET city_id = '4' WHERE id = 6;
+UPDATE employee SET city_id = '1' WHERE id = 7;
+UPDATE employee SET city_id = '5' WHERE id = 8;
+
+SELECT employee.first_name, employee.last_name, city.city_name
+FROM employee
+JOIN city ON employee.city_id = city.city_id;
+
+SELECT city.city_name, employee.first_name, employee.last_name
+FROM city
+LEFT JOIN employee ON employee.city_id = city.city_id;
+
+SELECT employee.first_name, city.city_name
+FROM employee
+FULL OUTER JOIN city ON employee.city_id = city.city_id;
+
+SELECT employee.first_name, city.city_name
+FROM employee
+CROSS JOIN city;
+
+SELECT city_name
+FROM city
+LEFT JOIN employee ON employee.city_id = city.city_id
+WHERE employee.city_id IS NULL;
